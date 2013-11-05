@@ -4,10 +4,10 @@ LDFLAGS += -lrt
 SNAP = ../snap/snap-core
 GLIB = ../snap/glib-core
 
-all: rand-test vec-test-01 vec-test-02 hash-test-01 hash-test-02 hash-test-03 two-vec-test-01
+all: rand-test vec-test-01 vec-test-02 hash-test-01 hash-test-02 hash-test-03 hash-test-04 two-vec-test-01
 opt: CXXFLAGS += -O3
 opt: LDFLAGS += -O3
-opt: rand-test vec-test-01 vec-test-02 hash-test-01 hash-test-02 hash-test-03 two-vec-test-01
+opt: rand-test vec-test-01 vec-test-02 hash-test-01 hash-test-02 hash-test-03 hash-test-04 two-vec-test-01
 
 rand-test: rand-test.cc Snap.o
 	g++ -o rand-test rand-test.cc Snap.o -I$(GLIB) -I$(SNAP) $(LDFLAGS)
@@ -21,6 +21,8 @@ hash-test-02: hash-test-02.cc Snap.o
 	g++ -o hash-test-02 hash-test-02.cc Snap.o -I$(GLIB) -I$(SNAP) $(LDFLAGS)
 hash-test-03: hash-test-03.cc Snap.o
 	g++ -o hash-test-03 hash-test-03.cc Snap.o -I$(GLIB) -I$(SNAP) $(LDFLAGS)
+hash-test-04: hash-test-04.cc Snap.o
+	g++ -o hash-test-04 hash-test-04.cc Snap.o -I$(GLIB) -I$(SNAP) $(LDFLAGS)
 two-vec-test-01: two-vec-test-01.cc Snap.o
 	g++ -o two-vec-test-01 two-vec-test-01.cc Snap.o -I$(GLIB) -I$(SNAP) $(LDFLAGS)
 Snap.o: 
