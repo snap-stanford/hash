@@ -148,70 +148,6 @@ void RandomAccessTest(int num_threads) {
     tstr, num_operation * num_threads, nps, tall, wtdiff);
 }
 
-void SequentialAccessTest() {
-  struct drand48_data buffer;
-  srand48_r(time(NULL), &buffer);
-  
-  float fs = getcputime();
-
-  long long s = 0;
-  for (long long i = 0; i < n; i++) {
-    s += v[i];
-  }
-  
-  struct rusage rusage;
-  getrusage(RUSAGE_SELF, &rusage);
-
-  float fe = getcputime();
-  float tdiff = fe - fs;
-
-  struct timeval tval;
-  char tstr[64];
-  gettimeofday(&tval, 0);
-  getstime(&tval, tstr);
-
-  float tall = 
-    ((float) (rusage.ru_utime.tv_usec + rusage.ru_stime.tv_usec) / 1000000) +
-    ((float) (rusage.ru_utime.tv_sec + rusage.ru_stime.tv_sec));
-  float nps = n / tdiff;
-
-  printf("%s\t__time_sequential_access__\tn %lld\tnps %.0f\tcpu(s) %.3f\tcpu_d(s) %.3f\n",
-    tstr, n, nps, tall, tdiff);
-}
-
-void UpdateTest() {
-  struct drand48_data buffer;
-  srand48_r(time(NULL), &buffer);
-  
-  float fs = getcputime();
-
-  long int r;
-  for (long long i = 0; i < num_operation; i++) {
-    lrand48_r(&buffer, &r);
-    v[r % n] = r;
-  }
-  
-  struct rusage rusage;
-  getrusage(RUSAGE_SELF, &rusage);
-
-  float fe = getcputime();
-  float tdiff = fe - fs - random_time_per_elem * num_operation;
-
-  struct timeval tval;
-  char tstr[64];
-  gettimeofday(&tval, 0);
-  getstime(&tval, tstr);
-
-  float tall = 
-    ((float) (rusage.ru_utime.tv_usec + rusage.ru_stime.tv_usec) / 1000000) +
-    ((float) (rusage.ru_utime.tv_sec + rusage.ru_stime.tv_sec));
-  float nps = num_operation / tdiff;
-
-  printf("%s\t__time_update__\tn %lld\tnps %.0f\tcpu(s) %.3f\tcpu_d(s) %.3f\n",
-    tstr, num_operation, nps, tall, tdiff);
-
-}
-
 void CalcRandomTime() {
   struct drand48_data buffer;
   srand48_r(time(NULL), &buffer);
@@ -246,10 +182,6 @@ int main( int argc, char* argv[] ){
   for (int i = 0; i < 8; i++) {
     RandomAccessTest(a[i]);
   }
-
-  //SequentialAccessTest();
-
-  //UpdateTest();
 
   return 0;
 }
