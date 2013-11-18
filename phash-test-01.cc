@@ -13,7 +13,7 @@
 
 int work_size;
 TIntPrV v;
-TPHash h;
+TPHash<TInt, TInt> h;
 long long n;
 long long num_operation = 100000000;
 
@@ -111,8 +111,8 @@ void InsertionTest(int num_threads) {
     ((float) (rusage.ru_utime.tv_sec + rusage.ru_stime.tv_sec));
   float nps = n/wtdiff;
 
-  printf("%s\t__time_insertion__\tn %lld\tnps %.0f\tcpu(s) %.3f\tcpu_d(s) %.3f\n",
-    tstr, n, nps, tall, wtdiff);
+  printf("%s\t__time_insertion__\tn %lld\tnps %.0f\tcpu(s) %.3f\tcpu_d(s) %.3f\tnum_thread(s) %d\n",
+	 tstr, n, nps, tall, wtdiff, num_threads);
 }
 
 void Verify() {
@@ -154,6 +154,7 @@ int main( int argc, char* argv[] ){
   // Insertion Test
   int a[] = {1,2,4,10,20,40,80,160};
   for (int i = 0; i < 8; i++) {
+    h.Clr();
     InsertionTest(a[i]);
   }
 
