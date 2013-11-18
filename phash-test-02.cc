@@ -13,7 +13,7 @@
 
 int work_size;
 TIntPrV v;
-TPHash h;
+TPHash<TInt, TInt> h;
 long long n;
 long long num_operation = 100000000;
 
