@@ -156,8 +156,6 @@ public:
   TIter GetI(const TKey& Key) const {return TIter(&Table[GetKeyId(Key)], Table.EndI());}
 
   void Gen(const int& ExpectVals){
-    // TODO: Correctly count NumVals
-    NumVals = ExpectVals;
     Table.Gen(GetNextPrime(ExpectVals*2));}
 
   void Clr(const bool& DoDel=true);
@@ -250,9 +248,9 @@ bool TPHash<TKey, TDat, THashFunc>::operator==(const TPHash& Hash) const {
 
 template<class TKey, class TDat, class THashFunc>
 int TPHash<TKey, TDat, THashFunc>::AddKey(const TKey& Key) {
-  // TODO: Correctly count the number of elements in the Table
-  /*NumVals++;
-    IAssertR(NumVals <= Table.Len(), "Table is full");*/
+  int CurVals = __sync_fetch_and_add(&NumVals.Val, 1);
+  IAssertR(CurVals < Table.Len(), "Table must not be full");
+
   const int BegTableN=abs(Key.GetPrimHashCd()%Table.Len());
   const int HashCd=abs(Key.GetSecHashCd());
 
@@ -260,7 +258,6 @@ int TPHash<TKey, TDat, THashFunc>::AddKey(const TKey& Key) {
   while (Table[TableN].HashCd != -1 || 
     (!__sync_bool_compare_and_swap(&Table[TableN].HashCd.Val, -1, HashCd))) {
     TableN = (TableN + 1) % Table.Len();    
-    IAssertR(BegTableN != TableN, "Hash Table is full");
   }
 
   Table[TableN].Key = Key;
