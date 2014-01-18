@@ -1,3 +1,11 @@
+/* 
+   This program uses a local forked SNAP at https://github.com/chantat/snap.
+   This program computes the distribution of the number of hash chain
+   traversals for THash's AddKey for n 32-bit integer keys and values
+   (i.e. the distribution of the length of the bucket's linked list when a key
+   that will be inserted is hashed into it). This program takes in one argument
+   which is n.
+*/
 #include "../snap/snap-core/Snap.h"
 
 #include <pthread.h>

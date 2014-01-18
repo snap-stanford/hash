@@ -1,3 +1,10 @@
+/*
+  This program evaluates the throughput of insert, look up and update of
+  TStrHash for 5 to 15 length string keys and 32-bit integer values. The time
+  taken to generate random numbers is not taken into account since it is
+  negligible compared to the time taken for hash operations. This program takes
+  in one argument which is the number of elements.
+*/
 #include "../snap/snap-core/Snap.h"
 
 #include <pthread.h>

@@ -1,3 +1,9 @@
+/* 
+   This program evaluates the throughput of append, random access, sequential 
+   access and update of TVec for 32-bit integer keys. The code supports up to
+   64-bit integer vector length. It takes in one argument which is the number
+   of elements.
+*/
 #include "../snap/snap-core/Snap.h"
 
 #include <stdio.h>

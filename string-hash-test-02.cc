@@ -1,3 +1,12 @@
+/*
+  This program evaluates the throughput of multi-threaded look up of TStrHash
+  for for 5 to 15 length string keys and 32-bit integer values. The code tests
+  multi-threaded look up of 1,2,4,10,20,40,80 and 160 threads with 10 million
+  look up operations per thread. The time taken to generate random numbers is
+  not taken into account since it is negligible compared to the time taken for
+  hash operations. The program takes in one argument which is the number of
+  elements.
+*/
 #include "../snap/snap-core/Snap.h"
 
 #include <pthread.h>

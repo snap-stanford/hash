@@ -1,3 +1,10 @@
+/*
+  This program uses a local forked SNAP at https://github.com/chantat/snap.
+  This program evaluates the throughput of multi-threaded bulk append of TVec
+  for n 32-bit integer keys. The code tests multi-threaded bulk append of
+  1,2,4,10,20,40,80 and 160 threads with batch size, m. The program takes
+  two arguments which are n and m.
+*/
 #include "../snap/snap-core/Snap.h"
 
 #include <pthread.h>

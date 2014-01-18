@@ -1,3 +1,9 @@
+/*
+  This program evaluates the throughput of multi-threaded insert of THashPar
+  for 32-bit integer keys and values. The code tests multi-threaded insert of
+  1,2,4,10,20,40,80 and 160 threads. The program takes in one argument which is
+  the number of elements.
+*/
 #include "../snap/snap-core/Snap.h"
 #include "hashpar/hashpar.h"
 

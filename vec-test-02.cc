@@ -1,3 +1,8 @@
+/*
+  This program evaluates the throughput of multi-threaded random access of TVec for 
+  32-bit integer keys. The code tests multi-threaded random access of 1,2,4,10,20,
+  40,80 and 160 threads. It takes in one argument which is the number of elements.
+*/
 #include "../snap/snap-core/Snap.h"
 
 #include <stdio.h>

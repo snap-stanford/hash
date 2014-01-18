@@ -42,8 +42,6 @@ hashpar-test-01: hashpar-test-01.cc Snap.o hashpar.o
 	g++ -o hashpar-test-01 hashpar-test-01.cc Snap.o hashpar.o -I$(GLIB) -I$(SNAP) -I$(HASHPARLIB) $(LDFLAGS)
 hashpar-test-02: hashpar-test-02.cc Snap.o hashpar.o
 	g++ -o hashpar-test-02 hashpar-test-02.cc Snap.o hashpar.o -I$(GLIB) -I$(SNAP) -I$(HASHPARLIB) $(LDFLAGS)
-hashpar-test-03: hashpar-test-03.cc Snap.o hashpar.o
-	g++ -o hashpar-test-03 hashpar-test-03.cc Snap.o hashpar.o -I$(GLIB) -I$(SNAP) -I$(HASHPARLIB) $(LDFLAGS)
 Snap.o: 
 	g++ -c $(CXXFLAGS) $(SNAP)/Snap.cpp -I$(GLIB) -I$(SNAP)
 hashpar.o:

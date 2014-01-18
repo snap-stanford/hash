@@ -1,6 +1,9 @@
-// You can uncomment the sections of AddKey in glib-core/hash.h to get
-// the runtime for each component of the function.
-
+/*
+  This program uses a local forked SNAP at https://github.com/chantat/snap. This program
+  evaluates the portion of time taken for each step of the THash's AddKey operation for
+  n 32-bit integer keys and values. To evaluate the total time of a step, uncomment its
+  section in the AddKey function. The program takes in one argument which is n.
+*/
 #include "../snap/snap-core/Snap.h"
 
 #include <pthread.h>
