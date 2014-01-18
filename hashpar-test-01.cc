@@ -1,5 +1,5 @@
 #include "../snap/snap-core/Snap.h"
-#include "phash/phash.h"
+#include "hashpar/hashpar.h"
 
 #include <pthread.h>
 #include <stdio.h>
@@ -13,7 +13,7 @@
 
 int work_size;
 TIntPrV v;
-TPHash<TInt, TInt> h;
+THashPar<TInt, TInt> h;
 long long n;
 long long num_operation = 100000000;
 
@@ -59,7 +59,7 @@ void* InsertWorker(void* args) {
   int start = id * work_size;
   int end = (id + 1) * work_size;
   for (long long i = start; i < end && i < n; i++) {
-    h.AddDat(v[i].Val1, v[i].Val2);
+    h.ThreadSafeAddDat(v[i].Val1, v[i].Val2, false);
   }
 }
 
@@ -76,7 +76,7 @@ void InsertionTest(int num_threads) {
   h.Gen(n);
   if (num_threads == 1) {
     for (long long i = 0; i < n; i++) {
-      h.AddDat(v[i].Val1, v[i].Val2);
+      h.ThreadSafeAddDat(v[i].Val1, v[i].Val2, false);
     }
   } else {
     int id[num_threads];
@@ -157,6 +157,7 @@ int main( int argc, char* argv[] ){
     h.Clr();
     InsertionTest(a[i]);
   }
+  h.ComputeLen();
 
   // Verification
   Verify();

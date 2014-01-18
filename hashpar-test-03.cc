@@ -1,5 +1,5 @@
 #include "../snap/snap-core/Snap.h"
-#include "phash/phash.h"
+#include "hashpar/hashpar.h"
 
 #include <pthread.h>
 #include <stdio.h>
@@ -11,9 +11,10 @@
 #include <sys/time.h>
 #include <sys/times.h>
 
+int keys = 10000;
 int work_size;
 TIntPrV v;
-TPHash<TInt, TInt> h;
+THashPar<TInt, TInt> h;
 long long n;
 long long num_operation = 100000000;
 
@@ -59,7 +60,7 @@ void* InsertWorker(void* args) {
   int start = id * work_size;
   int end = (id + 1) * work_size;
   for (long long i = start; i < end && i < n; i++) {
-    h.AddDat(v[i].Val1, v[i].Val2);
+    h.ThreadSafeAddDat(v[i].Val1, v[i].Val2);
   }
 }
 
@@ -76,7 +77,7 @@ void InsertionTest(int num_threads) {
   h.Gen(n);
   if (num_threads == 1) {
     for (long long i = 0; i < n; i++) {
-      h.AddDat(v[i].Val1, v[i].Val2);
+      h.ThreadSafeAddDat(v[i].Val1, v[i].Val2);
     }
   } else {
     int id[num_threads];
@@ -111,16 +112,20 @@ void InsertionTest(int num_threads) {
     ((float) (rusage.ru_utime.tv_sec + rusage.ru_stime.tv_sec));
   float nps = n/wtdiff;
 
-  printf("%s\t__time_insertion__\tn %lld\tnps %.0f\tcpu(s) %.3f\tcpu_d(s) %.3f\n",
-    tstr, n, nps, tall, wtdiff);
+  printf("%s\t__time_insertion__\tn %lld\tnps %.0f\tcpu(s) %.3f\tcpu_d(s) %.3f\tnum_thread(s) %d\n",
+	 tstr, n, nps, tall, wtdiff, num_threads);
 }
 
 void Verify() {
+  int counter = 0;
   for (int i = 0; i < n; i++) {
-    if (v[i].Val2 != h.GetDat(v[i].Val1)) {
-      printf("Error\n");
-      exit(0);
+    if (h.IsKey(v[i].Val1) && v[i].Val2 == h.GetDat(v[i].Val1)) {
+      counter++;
     }
+  }
+  
+  if (counter != keys/2) {
+    printf("Error %d\n", counter);
   }
 }
 
@@ -135,84 +140,12 @@ void GenerateTest() {
   
   for (long long i = 0; i < n; i++) {
     lrand48_r(&buffer, &r);
-    v[i].Val1 = i;
+    v[i].Val1 = r % keys;
+    lrand48_r(&buffer, &r);
     v[i].Val2 = r;
   }
 
-  TRnd rnd;
-  v.Shuffle(rnd);
 }
-
-void* RandomAccessWorker(void* args) {
-  int id = *(int *)args;
-  struct drand48_data buffer;
-  srand48_r(time(NULL) + pthread_self(), &buffer);
-
-  long long s = 0;
-  long int r = 0;
-  for (long long i = 0; i < num_operation; i++) {
-    lrand48_r(&buffer, &r);
-    s += h.GetDat(r % n);
-  }
-
-  char tmp[100];
-  sprintf(tmp, "%lld\n", s);
-}
-
-void RandomAccessTest(int num_threads) {
-  struct drand48_data buffer;
-  srand48_r(time(NULL), &buffer);
-
-  // Begin Test
-  timespec start_time;
-  clock_gettime(CLOCK_REALTIME, &start_time);
-  float fs = getcputime();
-
-  if (num_threads == 1) {
-    long long s = 0;
-    long int r;
-    for (long long i = 0; i < num_operation; i++) {
-      lrand48_r(&buffer, &r);
-      s += h.GetDat(r % n);	
-    }
-
-    char tmp[100];
-    sprintf(tmp, "%lld\n", s);
-  } else {
-    pthread_t threads[num_threads];
-    for (int i = 0; i < num_threads; i++) {
-      pthread_create(threads + i, NULL, RandomAccessWorker, NULL);
-    }
-    
-    for (int i = 0; i < num_threads; i++) {
-      pthread_join(threads[i], NULL);
-    }
-  }
-
-  // Calculate Stat
-  struct rusage rusage;
-  getrusage(RUSAGE_SELF, &rusage);
-
-  timespec end_time;
-  clock_gettime(CLOCK_REALTIME, &end_time);
-  float fe = getcputime();
-  float tdiff = fe - fs;
-  float wtdiff = gettimediff(start_time, end_time);
-
-  struct timeval tval;
-  char tstr[64];
-  gettimeofday(&tval, 0);
-  getstime(&tval, tstr);
-
-  float tall = 
-    ((float) (rusage.ru_utime.tv_usec + rusage.ru_stime.tv_usec) / 1000000) +
-    ((float) (rusage.ru_utime.tv_sec + rusage.ru_stime.tv_sec));
-  float nps = num_operation*num_threads / wtdiff;
-
-  printf("%s\t__time_random_access__\tn %lld\tnps %.0f\tcpu(s) %.3f\twtime_d(s) %.3f\n",
-    tstr, num_operation, nps, tall, wtdiff);
-}
-
 
 int main( int argc, char* argv[] ){
   if (argc != 2) {
@@ -223,14 +156,43 @@ int main( int argc, char* argv[] ){
   GenerateTest();
 
   // Insertion Test
-  InsertionTest(160);
-
   int a[] = {1,2,4,10,20,40,80,160};
   for (int i = 0; i < 8; i++) {
-    RandomAccessTest(a[i]);
+    h.Clr();
+    InsertionTest(a[i]);
   }
 
+  for (int i = 0; i < keys/2; i++) {
+    h.DelKey(2*i);
+  }
+
+  TIntPrV tmp;
+  h.GetKeyDatPrV(tmp);
+  printf("%d\n", tmp.Len());
   // Verification
   Verify();
+  printf("correct\n");
+
+  for (long long i = 0; i < keys/2; i++) {
+    h.ThreadSafeAddDat(i*2, -i*2);
+  }
+
+  int counter = 0;
+  for (int i = 0; i < n; i++) {
+    if (h.IsKey(v[i].Val1) && v[i].Val2 == h.GetDat(v[i].Val1)) {
+      counter++;
+    }
+  }
+
+  for (int i = 0; i < keys; i++) {
+    if (h.IsKey(i) && -i == h.GetDat(i)) {
+      counter++;
+    }
+  }
+  
+  if (counter != keys) {
+    printf("Error %d\n", counter);
+  }
+  printf("correct\n");
   return 0;
 }

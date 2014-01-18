@@ -176,6 +176,7 @@ int main( int argc, char* argv[] ){
   }
   sscanf(argv[1], "%lld", &n);
 
+  h.Gen(n);
   // Insertion Test
   InsertionTest();
   
