@@ -84,7 +84,6 @@ public:
 public:
   typedef THashParKeyDatI<TKey, TDat> TIter;
 private:
-  // The different states of each element in the table
   static const int FREE = 0;
   static const int WRITING_KEY = 1;
   static const int OCCUPIED = 2;
