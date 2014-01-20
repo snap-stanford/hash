@@ -5,10 +5,10 @@ SNAP = ../snap/snap-core
 GLIB = ../snap/glib-core
 HASHPARLIB = hashpar
 
-all: rand-test vec-test-01 vec-test-02 vec-test-03 vec-test-04 string-hash-test-01 string-hash-test-02 string-hash-test-03 hash-test-01 hash-test-02 hash-test-03 hash-test-04 hash-test-05 two-vec-test-01 hashpar-test-01 hashpar-test-02 hashpar-test-03
+all: rand-test vec-test-01 vec-test-02 vec-test-03 vec-test-04 string-hash-test-01 string-hash-test-02 string-hash-test-03 hash-test-01 hash-test-02 hash-test-03 hash-test-04 hash-test-05 two-vec-test-01 hashpar-test-01 hashpar-test-02
 opt: CXXFLAGS += -O3
 opt: LDFLAGS += -O3
-opt: rand-test vec-test-01 vec-test-02 vec-test-03 vec-test-04 string-hash-test-01 string-hash-test-02 string-hash-test-03 hash-test-01 hash-test-02 hash-test-03 hash-test-04 hash-test-05 two-vec-test-01 hashpar-test-01 hashpar-test-02 hashpar-test-03
+opt: rand-test vec-test-01 vec-test-02 vec-test-03 vec-test-04 string-hash-test-01 string-hash-test-02 string-hash-test-03 hash-test-01 hash-test-02 hash-test-03 hash-test-04 hash-test-05 two-vec-test-01 hashpar-test-01 hashpar-test-02
 
 rand-test: rand-test.cc Snap.o
 	g++ -o rand-test rand-test.cc Snap.o -I$(GLIB) -I$(SNAP) $(LDFLAGS)
