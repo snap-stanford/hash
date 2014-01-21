@@ -81,14 +81,15 @@ class THashPar{
 public:
   enum {HashPrimes=32};
   static const unsigned int HashPrimeT[HashPrimes]; // Prime numbers used for resize
+private:
+  enum state {
+    FREE = 0,
+    WRITING_KEY = 1,
+    OCCUPIED = 2,
+    WRITING_DAT = 3
+  };
 public:
   typedef THashParKeyDatI<TKey, TDat> TIter;
-private:
-  // The different states of each element in the table
-  static const int FREE = 0;
-  static const int WRITING_KEY = 1;
-  static const int OCCUPIED = 2;
-  static const int WRITING_DAT = 3;
 private:
   typedef THashParKeyDat<TKey, TDat> THPKeyDat;
   typedef TPair<TKey, TDat> TKeyDatP;
