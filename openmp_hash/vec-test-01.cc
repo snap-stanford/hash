@@ -4,7 +4,7 @@
    64-bit integer vector length. It takes in one argument which is the number
    of elements.
 */
-#include "../snap/snap-core/Snap.h"
+#include "../../snap/snap-core/Snap.h"
 
 #include <stdio.h>
 #include <stdlib.h>

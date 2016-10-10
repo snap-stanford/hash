@@ -4,7 +4,7 @@
   account since it is negligible compared to the time taken for hash operations. This
   program takes in one argument which is the number of elements.
 */
-#include "../snap/snap-core/Snap.h"
+#include "../../snap/snap-core/Snap.h"
 
 #include <pthread.h>
 #include <stdio.h>
