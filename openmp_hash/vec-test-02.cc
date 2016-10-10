@@ -177,7 +177,7 @@ int main( int argc, char* argv[] ){
 
   AppendTest();
 
-  int a[] = {1,2,4,10,20,40,80,160};
+  int a[] = {1,2,4,8,36,72,144};
   for (int i = 0; i < 8; i++) {
     RandomAccessTest(a[i]);
   }
