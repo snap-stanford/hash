@@ -1,4 +1,3 @@
-
 #include "../../snap/snap-core/Snap.h"
 
 #include <stdio.h>
@@ -14,7 +13,6 @@
 // and gap between them)
 TVec<TInt, int64> v;
 long long n;
-float random_time_per_elem;
 int num_threads = 144;
 
 void getstime(struct timeval *tval, char *s)
@@ -66,7 +64,7 @@ void SequentialAccessTest(long long gap, long long ops, int thread_count) {
 
   timespec end_time;
   clock_gettime(CLOCK_REALTIME, &end_time);
-  float wtdiff = gettimediff(start_time, end_time) - random_time_per_elem * num_operation;
+  float wtdiff = gettimediff(start_time, end_time);
 
   struct timeval tval;
   char tstr[64];
@@ -76,11 +74,11 @@ void SequentialAccessTest(long long gap, long long ops, int thread_count) {
   float tall = 
     ((float) (rusage.ru_utime.tv_usec + rusage.ru_stime.tv_usec) / 1000000) +
     ((float) (rusage.ru_utime.tv_sec + rusage.ru_stime.tv_sec));
-  float nps = num_operation / wtdiff;
+  float nps = ops / wtdiff;
 
   printf("__time_sequential_access__,n, npst, cpu(s), wtime_d(s)\n");
   printf("%s, %lld, %.0f, %.3f, %.3f\n",
-    tstr, num_operation * thread_count, nps, tall, wtdiff);
+    tstr, ops * thread_count, nps, tall, wtdiff);
 }
 
 

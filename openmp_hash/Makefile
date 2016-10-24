@@ -4,11 +4,13 @@ LDFLAGS += -lrt
 SNAP = ../../snap/snap-core
 GLIB = ../../snap/glib-core
 
-all: vec-test-01 vec-test-02 vec-test-03 hash-test-01 hash-test-02 vec-test-02-indiv_thr hash-test-02-indiv_thr make_vector load_vector_test_thr
+all: vec-test-01 vec-test-02 vec-test-03 hash-test-01 hash-test-02 vec-test-02-indiv_thr hash-test-02-indiv_thr make_vector load_vector_test_thr vec_seq
 opt: CXXFLAGS += -O3
 opt: LDFLAGS += -O3
-opt: vec-test-01 vec-test-02 vec-test-03 hash-test-01 hash-test-02 vec-test-02-indiv_thr hash-test-02-indiv_thr make_vector load_vector_test_thr
+opt: vec-test-01 vec-test-02 vec-test-03 hash-test-01 hash-test-02 vec-test-02-indiv_thr hash-test-02-indiv_thr make_vector load_vector_test_thr vec_seq
 
+vec_seq: vec_seq.cc Snap.o
+	g++ $(CXXFLAGS) -o vec_seq vec_seq.cc Snap.o -I$(GLIB) -I$(SNAP) $(LDFLAGS)
 vec-test-01: vec-test-01.cc Snap.o
 	g++ $(CXXFLAGS) -o vec-test-01 vec-test-01.cc Snap.o -I$(GLIB) -I$(SNAP) $(LDFLAGS)
 vec-test-02: vec-test-02.cc Snap.o
