@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <iostream>
 
 #include <sys/resource.h>
 #include <sys/time.h>
@@ -11,6 +12,7 @@
 // Loads a 10bn element array and tests multithreaded
 // sequential access (with the given number of ops
 // and gap between them)
+// Vector is 10000000000 elements long
 TVec<TInt, int64> v;
 long long n;
 int num_threads = 144;
@@ -49,6 +51,10 @@ void SequentialAccessWorker(long long start, long long ops) {
 }
 
 void SequentialAccessTest(long long gap, long long ops, int thread_count) {
+  if ((gap+ops)*num_threads > n) {
+    std::cout<<"args overfill vector"<<std::endl;
+    return;
+  }
   timespec start_time;
   clock_gettime(CLOCK_REALTIME, &start_time);
 
@@ -76,31 +82,35 @@ void SequentialAccessTest(long long gap, long long ops, int thread_count) {
     ((float) (rusage.ru_utime.tv_sec + rusage.ru_stime.tv_sec));
   float nps = ops / wtdiff;
 
-  printf("__time_sequential_access__,n, npst, cpu(s), wtime_d(s)\n");
-  printf("%s, %lld, %.0f, %.3f, %.3f\n",
-    tstr, ops * thread_count, nps, tall, wtdiff);
+  printf("__time_sequential_access__,gap, ops, n, npst, cpu(s), wtime_d(s)\n");
+  printf("%s, %lld, %lld, %lld, %.0f, %.3f, %.3f\n",
+    tstr, gap, ops, ops * thread_count, nps, tall, wtdiff);
 }
 
 
 int main( int argc, char* argv[] ){
-  if (argc != 5) {
+  if (argc != 2) {
+    std::cout<<"invalid num args"<<std::endl;
     exit(0);
   }
-  TStr filename(argv[4]);
+  TStr filename(argv[1]);
   TFIn instream(filename);
   v.Load(instream);
   n = v.Len();
-
-  long long gap; //elements between threads
-  sscanf(argv[1], "%lld", &gap);
-  long long ops; //operations per thread
-  sscanf(argv[2], "%lld", &ops);
-  int num_threads; //number of threads
-  sscanf(argv[3], "%d", &num_threads);
-  if ((gap+ops)*num_threads > n) {
-    exit(0);
+  std::cout<<"vector loaded"<<std::endl;
+  long long gap_ops[9][2] = {
+    {50000000, 10000000},
+    {50000000, 1000000},
+    {50000000, 100000},
+    {50000000, 10000},
+    {5000000, 10000000},
+    {500000, 10000000},
+    {50000, 10000000},
+    {500, 10000000},
+    {0, 10000000},
   }
-  SequentialAccessTest(gap, ops, num_threads);
-
+  for(long long ops[2] : gap_ops) {
+    SequentialAccessTest(ops[0], ops[1], num_threads);
+  }
  return 0;
 }
