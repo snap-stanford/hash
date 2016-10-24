@@ -9,14 +9,13 @@
 #include <sys/time.h>
 #include <sys/times.h>
 
-TVec<TInt, int64> v;
 long long n;
 
-void fillVector(long long start, long long end) {
+void fillVector(TVec<TInt, int64> & v) {
   #pragma omp parallel for
   for (long long i = 0; i < n; i++) {
     if (i % (n/10) == 0) {
-      printf("%d\n", i);
+      printf("still updating...\n");
     }
     v[i] = lrand48();
   }
@@ -28,11 +27,11 @@ int main( int argc, char* argv[] ){
   }
   sscanf(argv[1], "%lld", &n);
 
-  v = TVec(n);
+  TVec<TInt, int64> v = TVec<TInt, int64>(n);
 
-  fillVector();
+  fillVector(v);
   TStr filename(argv[2]);
   TFOut outstream(filename);
   v.Save(outstream);
   return 0;
-}///
+}
