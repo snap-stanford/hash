@@ -15,7 +15,6 @@
 // Vector is 10000000000 elements long
 TVec<TInt, int64> v;
 long long n;
-int num_threads = 144;
 
 void getstime(struct timeval *tval, char *s)
 {
@@ -51,17 +50,17 @@ void SequentialAccessWorker(long long start, long long ops) {
 }
 
 void SequentialAccessTest(long long gap, long long ops, int thread_count) {
-  if ((gap+ops)*num_threads > n) {
+  if ((gap+ops)*thread_count > n) {
     std::cout<<"args overfill vector"<<std::endl;
     return;
   }
   timespec start_time;
   clock_gettime(CLOCK_REALTIME, &start_time);
 
-  #pragma omp parallel num_threads(num_threads)
+  #pragma omp parallel num_threads(thread_count)
   {
     #pragma omp for
-    for(int i=0; i<num_threads; i++) {
+    for(int i=0; i<thread_count; i++) {
       SequentialAccessWorker(i*(gap+ops), ops);
     }
   }
@@ -99,18 +98,19 @@ int main( int argc, char* argv[] ){
   n = v.Len();
   std::cout<<"vector loaded"<<std::endl;
   long long gap_ops[9][2] = {
-    {50000000, 10000000},
-    {50000000, 1000000},
-    {50000000, 100000},
-    {50000000, 10000},
-    {5000000, 10000000},
-    {500000, 10000000},
-    {50000, 10000000},
-    {500, 10000000},
+    {10000000, 10000000},
+    {10000000, 1000000},
+    {10000000, 100000},
+    {10000000, 10000},
+    {1000000, 10000000},
+    {100000, 10000000},
+    {10000, 10000000},
+    {100, 10000000},
     {0, 10000000},
-  }
-  for(long long ops[2] : gap_ops) {
-    SequentialAccessTest(ops[0], ops[1], num_threads);
+  };
+  for (int i=0; i<9; i++) {
+    SequentialAccessTest(gap_ops[i][0], gap_ops[i][1], 72);
+    SequentialAccessTest(gap_ops[i][0], gap_ops[i][1], 144);
   }
  return 0;
 }
