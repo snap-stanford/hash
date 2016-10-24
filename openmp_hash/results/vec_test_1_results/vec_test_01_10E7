@@ -1,6 +1,0 @@
--------
-13:10:46.799	__time_append__	n 100000000	nps 26118402	cpu(s) 15.299	cpu_d(s) 3.829
-13:10:48.307	__time_random_access__	n 10000000	nps 7122962	cpu(s) 16.803	wtime_d(s) 1.404
-13:10:49.396	__time_sequential_access__	n 100000000	nps 92010376	cpu(s) 17.890	cpu_d(s) 1.087
-13:10:50.877	__time_update__	n 10000000	nps 7280556	cpu(s) 19.368	cpu_d(s) 1.374
--------
