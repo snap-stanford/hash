@@ -13,7 +13,6 @@
 // sequential access (with the given number of ops
 // and gap between them)
 // Vector is 10000000000 elements long
-TVec<TInt, int64> v;
 long long n;
 
 void getstime(struct timeval *tval, char *s)
@@ -40,7 +39,7 @@ float gettimediff(timespec start, timespec end) {
   return (float)temp.tv_sec + ((float)temp.tv_nsec) / 1000000000;
 }
 
-void SequentialAccessWorker(long long start, long long ops) {
+void SequentialAccessWorker(long long start, long long ops, TVec<TInt, int64>& v) {
   long long s = 0;
   for(long long i=0; i<ops; i++) {
     s+= v[start+i];
@@ -49,7 +48,7 @@ void SequentialAccessWorker(long long start, long long ops) {
   sprintf(tmp, "%lld\n", s);
 }
 
-void SequentialAccessTest(long long gap, long long ops, int thread_count) {
+void SequentialAccessTest(long long gap, long long ops, int thread_count, TVec<TInt, int64> &v) {
   if ((gap+ops)*thread_count > n) {
     std::cout<<"args overfill vector"<<std::endl;
     return;
@@ -100,6 +99,6 @@ int main( int argc, char* argv[] ){
   long long gap = 10000000;
   TVec<TInt, int64> v(n);
   std::cout<<"vector loaded"<<std::endl;
-  SequentialAccessTest(gap, ops, thread_count);
+  SequentialAccessTest(gap, ops, thread_count, v);
  return 0;
 }
