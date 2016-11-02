@@ -23,10 +23,10 @@ float gettimediff(timespec start, timespec end) {
 }
 
 
-void* perform_malloc(long long size) {
+char* perform_malloc(long long size) {
   timespec start_time;
   clock_gettime(CLOCK_REALTIME, &start_time);
-  void* buf = malloc(size);
+  char* buf = new char[size];
   timespec end_time;
   clock_gettime(CLOCK_REALTIME, &end_time);
   float wtdiff = gettimediff(start_time, end_time);
@@ -34,14 +34,30 @@ void* perform_malloc(long long size) {
   return buf;
 }
 
-void perform_free(void* buf {
+void perform_free(char* buf) {
   timespec start_time;
   clock_gettime(CLOCK_REALTIME, &start_time);
-  free(buf);
+  delete[] buf;
   timespec end_time;
   clock_gettime(CLOCK_REALTIME, &end_time);
   float wtdiff = gettimediff(start_time, end_time);
   std::cout<<"free: " << wtdiff <<std::endl;
+}
+
+void perform_tvec(long long size) {
+  timespec start_time;
+  clock_gettime(CLOCK_REALTIME, &start_time);
+  TVec<TInt, int64> v(size);
+  timespec end_time;
+  clock_gettime(CLOCK_REALTIME, &end_time);
+  float wtdiff = gettimediff(start_time, end_time);
+  v[0] = 0;
+  timespec start_time;
+  clock_gettime(CLOCK_REALTIME, &start_time);
+  ~v;
+  timespec end_time;
+  clock_gettime(CLOCK_REALTIME, &end_time);
+  float wtdiff = gettimediff(start_time, end_time);
 }
 
 int main( int argc, char* argv[] ){
@@ -49,9 +65,18 @@ int main( int argc, char* argv[] ){
     std::cout<<"invalid num args"<<std::endl;
     exit(0);
   }
-  long long size;
-  sscanf(argv[1], "%lld", &size);
-  void* buf = perform_malloc(size);
-  perform_free(buf);
+  long long max_size;
+  sscanf(argv[1], "%lld", &max_size);
+  size_t elem_size = sizeof(TInt);
+  for (long long i=10000; i<= max_size; i=i*10) {
+    std::cout<<i<<std::endl;
+    long long elems = i/elem_size;
+    for (int j = 0; j<5; j++) {
+      char* buf = perform_malloc(i);
+      char[0] = 0;
+      perform_free(buf);
+      perform_tvc(elems);
+    }
+  }
  return 0;
 }
