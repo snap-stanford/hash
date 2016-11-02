@@ -38,7 +38,7 @@ void perform_malloc(long long size) {
     clock_gettime(CLOCK_REALTIME, &start_time);
     delete[] buf;
     clock_gettime(CLOCK_REALTIME, &end_time);
-    total_malloc += gettimediff(start_time, end_time);
+    total_free += gettimediff(start_time, end_time);
   }
   std::cout << "malloc: " << total_malloc/repeat_times << " free: " << total_free/repeat_times << std::endl;
 }
@@ -52,12 +52,11 @@ void perform_tvec(long long size) {
   long long elems = size/elem_size;
   for (int i=0; i<repeat_times; i++) {
     clock_gettime(CLOCK_REALTIME, &start_time);
-    TVec<TInt, int64> v(elems);
+    TVec<TInt, int64>*v = new TVec<TInt, int64>(elems);
     clock_gettime(CLOCK_REALTIME, &end_time);
     total_alloc += gettimediff(start_time, end_time);
-    v[0] = 0;
     clock_gettime(CLOCK_REALTIME, &start_time);
-    ~v;
+    delete v;
     clock_gettime(CLOCK_REALTIME, &end_time);
     total_destroy += gettimediff(start_time, end_time);
   }
