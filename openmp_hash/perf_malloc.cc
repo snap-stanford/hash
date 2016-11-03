@@ -1,5 +1,4 @@
 #include "../../snap/snap-core/Snap.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,6 +10,25 @@
 #include <sys/times.h>
 
 int REPEAT_TIMES = 3;
+size_t ARRAY_SIZE;
+
+/* Callbacks */
+void* malloc_chars() {return malloc(ARRAY_SIZE);}
+void* calloc_chars() {return calloc(ARRAY_SIZE, 1);}
+void* new_chars() {return new char[ARRAY_SIZE];}
+void* alloc_tvec() {
+  size_t elem_size = sizeof(TInt);
+  size_t elems = ARRAY_SIZE/elem_size;
+  return new TVec<TInt, int64>(elems);
+}
+void new_destr(void* buf) {
+  char* arr = (char*) buf;
+  delete[] arr;
+}
+void free_TVec(void* buf) {
+  TVec<TInt, int64>* v = (TVec<TInt, int64>*) buf;
+  delete v;
+}
 
 float gettimediff(timespec start, timespec end) {
   timespec temp; 
@@ -24,62 +42,36 @@ float gettimediff(timespec start, timespec end) {
   return (float)temp.tv_sec + ((float)temp.tv_nsec) / 1000000000;
 }
 
-void 
-time_operation(float &a_result, float &d_result, void* (*allocFn)(), void (*destFn)(void* buf)) {
-  a_result = 0;
-  d_result = 0;
+void
+time_operation(void* (*allocFn)(), void (*destFn)(void* buf)) {
+  float create = 0;
+  float destr = 0;
   timespec start_time;
   timespec end_time;
   for (int i=0; i<REPEAT_TIMES; i++) {
     clock_gettime(CLOCK_REALTIME, &start_time);
     void* buf = allocFn();
     clock_gettime(CLOCK_REALTIME, &end_time);
-    a_result += gettimediff(start_time, end_time);
+    create += gettimediff(start_time, end_time);
     clock_gettime(CLOCK_REALTIME, &start_time);
     destFn(buf);
     clock_gettime(CLOCK_REALTIME, &end_time);
-    d_result += gettimediff(start_time, end_time);
+    destr += gettimediff(start_time, end_time);
   }
-  a_result = a_result/REPEAT_TIMES;
-  d_result = d_result/REPEAT_TIMES;
+  create = create/REPEAT_TIMES;
+  destr = destr/REPEAT_TIMES;
+  printf("Allocation: %f, Destruction: %f\n", alloc_result, free_result);
 }
 
-void perform_malloc(long long size, int static_opt) {
-  float alloc_result;
-  float free_result;
+void measure_allocations(size_t size, int static_opt) {
   if (static_opt == 1) {
-    auto allocFn = [size] () {return malloc(size);};
-    auto destrFn = [] (void* buf) {free(buf);};
-    time_operation(alloc_result, free_result, allocFn, destrFn);
+    time_operation(malloc_chars, free);
   } else if (static_opt == 2) {
-    auto allocFn = [size] () {return calloc(size, 1);};
-    auto destrFn = [] (void* buf) {free(buf);};
-    time_operation(alloc_result, free_result, allocFn, destrFn);
+    time_operation(calloc_chars, free);
   } else {
-    auto allocFn = [size] () {return new char[size];};
-    auto destrFn = [] (void* buf) {
-      char* arr = (char*) buf;
-      delete[] arr;
-    };
-    time_operation(alloc_result, free_result, allocFn, destrFn);
+    time_operation(new_chars, new_destr);
   }
-  printf("Size: %lld, Allocation: %f, Destruction: %f\n", size, alloc_result, free_result);
-}
-
-void perform_tvec(long long size) {
-  float alloc_result;
-  float free_result;
-  size_t elem_size = sizeof(TInt);
-  long long elems = size/elem_size;
-  auto allocFn = [size] () {
-    return new TVec<TInt, int64>(elems);
-  };
-  auto destrFn = [] (void* buf) {
-    TVec<TInt, int64>*v = (TVec<TInt, int64>*) buf;
-    delete v;
-  };
-  time_operation(alloc_result, free_result, allocFn, destrFn);
-  printf("Num Elems: %lld, TVec Allocation: %f, TVec Destruction: %f\n", elems, alloc_result, free_result);
+  time_operation(alloc_tvec, free_TVec);
 }
 
 int main( int argc, char* argv[] ){
@@ -87,18 +79,16 @@ int main( int argc, char* argv[] ){
     std::cout<<"invalid num args"<<std::endl;
     exit(0);
   }
-  long long max_size;
+  size_t size;
+  sscanf(argv[1], "%lld", &size);
+  ARRAY_SIZE = size;
   int static_opt;
-  sscanf(argv[1], "%lld", &max_size);
-  sscanf(argv[1], "%d", &static_opt);
-  // 1 for malloc, 2 for calloc, 3 for new
+  sscanf(argv[2], "%d", &static_opt);
   if (static_opt < 1 || static_opt > 3) {
     std::cout<<"invalid num args"<<std::endl;
     exit(0);
   }
-  for (long long i=10000; i<= max_size; i=i*10) {
-    std::cout<<i<<std::endl;
-    perform_malloc(i, static_opt);
-  }
+  printf("Size is %zd \n", size);
+  measure_allocations(size, static_opt);
  return 0;
 }
