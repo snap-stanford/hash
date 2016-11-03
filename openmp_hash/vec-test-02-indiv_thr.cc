@@ -1,8 +1,9 @@
 /*
-  This program evaluates the throughput of multi-threaded random access of TVec for 
-  32-bit integer keys. The code tests multi-threaded random access of 1,2,4,10,20,
-  40,80 and 160 threads. It takes in one argument which is the number of elements.
-*/
+ * This is a modification of vec-test-02 that, rather than
+ * running on multiple thread counts, only runs on with a
+ * single thread count (so that we can isolate performance
+ * with perf). The program takes a single argument: thread_count
+ */
 #include "../../snap/snap-core/Snap.h"
 
 #include <stdio.h>
@@ -24,7 +25,6 @@ void getstime(struct timeval *tval, char *s)
   int msec;
   char *s1;
 
-  // printf("2. %d %d\n", tval->tv_sec, tval->tv_usec);
   s1 = strncpy(s, ctime(&tval->tv_sec)+11, 8);
   s1[8] = '\0';
   msec = (int) (tval->tv_usec / 1000);

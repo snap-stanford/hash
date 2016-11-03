@@ -1,8 +1,8 @@
 /*
- *   This program evaluates the throughput of multi-threaded random access of TVec for 
- *     32-bit integer keys. The code tests multi-threaded random access of 1,2,4,10,20,
- *       40,80 and 160 threads. It takes in one argument which is the number of elements.
- *       */
+ * This program performs multithreaded random access on a TVector that
+ * is pre-allocated with a certain size in the constructor.
+ * It takes two arguments: the size of the vector and the number of threads.
+ */
 #include "../../snap/snap-core/Snap.h"
 
 #include <stdio.h>
@@ -99,14 +99,16 @@ void RandomAccessTest(int thread_count, TVec<TInt, int64> &v) {
 }
 
 int main( int argc, char* argv[] ){
-  if (argc != 2) {
+  if (argc != 3) {
     exit(0);
   }
+  int thread_count;
   sscanf(argv[1], "%lld", &n);
+  sscanf(argv[2], &thread_count);
 
   TVec<TInt, int64> v(n);
 
-  RandomAccessTest(72, v);
+  RandomAccessTest(thread_count, v);
 
   return 0;
 }

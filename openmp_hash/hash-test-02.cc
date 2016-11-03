@@ -26,7 +26,6 @@ void getstime(struct timeval *tval, char *s)
   int msec;
   char *s1;
 
-  // printf("2. %d %d\n", tval->tv_sec, tval->tv_usec);
   s1 = strncpy(s, ctime(&tval->tv_sec)+11, 8);
   s1[8] = '\0';
   msec = (int) (tval->tv_usec / 1000);
@@ -174,7 +173,7 @@ int main( int argc, char* argv[] ){
   
   // Random Access Test
   int a[] = {1,2,4,8,36,72,144};
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < 7; i++) {
     RandomAccessTest(a[i]);
   }
   return 0;

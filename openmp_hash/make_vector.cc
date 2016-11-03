@@ -1,3 +1,8 @@
+/*
+ * Create a TVec of random integers and save the vector in an output
+ * file. The program takes one argument which is the number
+ * of elements in the vector.
+ */
 #include "../../snap/snap-core/Snap.h"
 
 #include <stdio.h>

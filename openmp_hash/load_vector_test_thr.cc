@@ -1,4 +1,9 @@
-
+/*
+ * This program loads a vector from a file and performs Random Access
+ * operations on it given a certain number of threads.
+ * The program has two parameters: the file name of the vector and
+ * the number of threads
+ */
 #include "../../snap/snap-core/Snap.h"
 
 #include <stdio.h>

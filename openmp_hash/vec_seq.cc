@@ -1,3 +1,10 @@
+/* Loads a 10bn element array and tests multithreaded
+ * sequential access (with the given number of ops
+ * and gap between them). The segments do not overlap
+ * so (ops+gap)*threads must be less than the length of the vector
+ * Vector is 10000000000 elements long
+ * The program takes in the filename as an arg
+ */
 #include "../../snap/snap-core/Snap.h"
 
 #include <stdio.h>
@@ -9,10 +16,6 @@
 #include <sys/resource.h>
 #include <sys/time.h>
 #include <sys/times.h>
-// Loads a 10bn element array and tests multithreaded
-// sequential access (with the given number of ops
-// and gap between them)
-// Vector is 10000000000 elements long
 TVec<TInt, int64> v;
 long long n;
 

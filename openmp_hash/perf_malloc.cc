@@ -1,3 +1,12 @@
+/*
+ * Perform an allocation of a large amount of memory and measure the
+ * the time it takes to allocate and free. The program will perform
+ * a static allocation (malloc, calloc, or new) and create a TVec
+ * of integers of the equivalent size.
+ * The program takes two arguments:
+ *  size: the size of the array to be allocated
+ *  static_opt: 1 for malloc, 2 for calloc, 3 for new
+ */
 #include "../../snap/snap-core/Snap.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,6 +51,7 @@ float gettimediff(timespec start, timespec end) {
   return (float)temp.tv_sec + ((float)temp.tv_nsec) / 1000000000;
 }
 
+/* Time the operation of two callbacks: allocFn and destFn */
 void
 time_operation(void* (*allocFn)(), void (*destFn)(void* buf)) {
   float create = 0;
@@ -58,9 +68,7 @@ time_operation(void* (*allocFn)(), void (*destFn)(void* buf)) {
     clock_gettime(CLOCK_REALTIME, &end_time);
     destr += gettimediff(start_time, end_time);
   }
-  create = create/REPEAT_TIMES;
-  destr = destr/REPEAT_TIMES;
-  printf("Allocation: %f, Destruction: %f\n", alloc_result, free_result);
+  printf("Allocation: %.3e, Destruction: %.3e\n", create/REPEAT_TIMES, destr/REPEAT_TIMES);
 }
 
 void measure_allocations(size_t size, int static_opt) {
